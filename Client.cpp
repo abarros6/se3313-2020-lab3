@@ -11,7 +11,7 @@ using namespace std;
 // function conn() calls itself recursively until a successful connection is made
 Socket conn()
 {
-	Socket socket("127.0.0.1", 3000);
+	Socket socket("127.0.0.1", 6758);
 
 	try
 	{

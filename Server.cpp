@@ -156,15 +156,35 @@ int main(void)
     cout << "I am a server." << std::endl;
 
     // Create our server
-    SocketServer server(3000);
+    SocketServer server(6758);
 
-    // Need a thread to perform server operations
-    ServerThread serverThread(server);
+    pid_t cpid = fork();
 
-    // This will wait for input to shutdown the server
-    FlexWait cinWaiter(1, stdin);
-    cinWaiter.Wait();
+    //child process
+    if (cpid == 0)
+    {
+        bool running = true;
+        while (running)
+        {
+            string serverInput;
+            cin >> serverInput;
+            if (serverInput == "Done")
+            {
+                running = false;
+                // Shut down and clean up the server
+                server.Shutdown();
+            }
+        }
+    }
+    // parent process
+    else if (cpid > 0)
+    {
 
-    // Shut down and clean up the server
-    server.Shutdown();
+        // Need a thread to perform server operations
+        ServerThread serverThread(server);
+
+        // This will wait for input to shutdown the server
+        FlexWait cinWaiter(1, stdin);
+        cinWaiter.Wait();
+    }
 }
